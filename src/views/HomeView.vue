@@ -1,3 +1,3 @@
 <template>
-  <div class="home">홈</div>
+  <main class="home"></main>
 </template>
