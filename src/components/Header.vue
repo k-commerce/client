@@ -1,6 +1,6 @@
 <template>
   <header>
-    <i class="fas fa-bars" />
+    <i class="fas fa-bars" @click="categoryModalFunc" />
     <span>
       <input type="text" />
       <i class="fas fa-search" />
@@ -8,7 +8,31 @@
     <i class="fas fa-shopping-cart" />
     <i class="fas fa-user" />
   </header>
+  <CategoryModal v-if="categoryModalVal" />
 </template>
+
+<script>
+import CategoryModal from '@/components/CategoryModal'
+export default {
+  data () {
+    return {
+      categoryModalVal: false
+    }
+  },
+  components: {
+    CategoryModal
+  },
+  methods: {
+    categoryModalFunc () {
+      if (this.categoryModalVal === false) {
+        this.categoryModalVal = true
+      } else {
+        this.categoryModalVal = false
+      }
+    }
+  }
+}
+</script>
 
 <style scoped>
 header {
