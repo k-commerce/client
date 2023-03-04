@@ -1,5 +1,5 @@
 <template>
-  <div class="categoryModal">
+  <main class="categoryModal">
     <ul class="parentCategory">
       <li @click="openChildCategory1">
         Category 1<i class="fas fa-caret-down fa-lg"></i>
@@ -26,7 +26,7 @@
         <li>Category 3-3</li>
       </ul>
     </ul>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -67,7 +67,6 @@ export default {
 <style scoped>
 .categoryModal {
   width: 27rem;
-  height: 44rem;
   background-color: #f6f6f6;
   position: fixed;
 }
@@ -86,7 +85,7 @@ export default {
   border: 1px solid #ddd;
   margin-top: -1px;
   background-color: #f6f6f6;
-  padding: 12px;
+  padding: 0.6rem;
   cursor: pointer;
 }
 .parentCategory > li:hover {
@@ -111,7 +110,7 @@ export default {
   border: 1px solid #ddd;
   margin-top: -1px;
   background-color: white;
-  padding: 12px;
+  padding: 0.6rem;;
   cursor: pointer;
 }
 .childCategory > li:hover {
