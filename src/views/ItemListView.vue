@@ -1,5 +1,5 @@
 <template>
-  <main class="item">
+  <main class="itemList">
     <div class="top">Category</div>
     <ul>
       <li>Category 1-1</li>
@@ -41,14 +41,14 @@
   margin-bottom: 0.8rem;
 }
 
-.item > ul {
+.itemList > ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
   cursor: pointer;
 }
 
-.item > ul > li {
+.itemList > ul > li {
   border: 1px solid #ddd;
   margin-top: -1px;
   background-color: #f6f6f6;
@@ -56,7 +56,7 @@
   cursor: pointer;
   text-align: center;
 }
-.item > ul > li:hover {
+.itemList > ul > li:hover {
   background-color: aliceblue;
 }
 
