@@ -55,6 +55,10 @@ export default {
   margin: 0.5rem;
 }
 
+.itemInfo > p {
+  margin-left: 0.5rem;
+}
+
 .calculation > p {
   display: inline-block;
   margin: 0px;
