@@ -1,31 +1,19 @@
 <template>
-  <main class="addressList">
-    <AddressModal v-if="addressModal" :address="address" @close="close" />
-
-    <button @click="open(null)">배송지 추가</button>
+  <div class="addressListModal">
+    <button @click="close(null)">직접 입력</button>
 
     <span v-for="address in addressList" :key="address">
       <span>{{ address.name }}</span>
       <div>{{ '(' + address.postcode + ') ' + address.selected + ' ' + address.detailed }}</div>
-      <span>
-        <button @click="open(address)">수정</button>
-        <button>삭제</button>
-      </span>
+      <button @click="close(address)">선택</button>
     </span>
-  </main>
+  </div>
 </template>
 
 <script>
-import AddressModal from '@/components/AddressModal'
-
 export default {
-  components: {
-    AddressModal
-  },
   data () {
     return {
-      addressModal: false,
-      address: null,
       addressList: [
         { id: 1, name: '집', postcode: '02005', selected: '서울특별시 중랑구 동일로163길 12-10', detailed: '505호' },
         { id: 2, name: '학교', postcode: '05006', selected: '서울특별시 광진구 능동로 209', detailed: '대양AI센터' },
@@ -34,29 +22,29 @@ export default {
     }
   },
   methods: {
-    open (address) {
-      this.addressModal = true
-      this.address = address
-    },
-    close () {
-      this.addressModal = false
+    close (address) {
+      this.$emit('close', address)
     }
   }
 }
 </script>
 
 <style scoped>
-.addressList {
-  text-align: center;
+.addressListModal {
+  overflow: auto;
+  position: fixed;
+  width: 27rem;
+  height: 44rem;
+  background-color: white;
 }
 
-.addressList > button {
+.addressListModal > button {
   width: 24rem;
   height: 3rem;
   margin: 1rem 0;
 }
 
-.addressList > span {
+.addressListModal > span {
   display: inline-block;
   width: 22rem;
   height: 10rem;
@@ -66,17 +54,17 @@ export default {
   text-align: left;
 }
 
-.addressList > span > span {
-  display: flex;
-  justify-content: space-between;
+.addressListModal > span > span {
+  display: block;
   height: 2rem;
 }
 
-.addressList > span > div {
+.addressListModal > span > div {
   height: 6rem;
 }
 
-.addressList > span > span > button {
+.addressListModal > span > button {
   width: 6rem;
+  height: 2rem;
 }
 </style>

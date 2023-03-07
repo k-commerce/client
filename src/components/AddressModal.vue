@@ -5,13 +5,9 @@
     <input type="text" placeholder="도로명 주소 / 지번 주소" readonly v-model="selected" @click="findPostcode" />
     <input type="text" placeholder="상세 주소" v-model="detailed" />
 
-    <span v-if="address">
-      <button>수정</button>
-      <button>삭제</button>
-      <button @click="close">취소</button>
-    </span>
-    <span v-else>
-      <button>추가</button>
+    <span>
+      <button v-if="address">수정</button>
+      <button v-else>추가</button>
       <button @click="close">취소</button>
     </span>
 
@@ -75,6 +71,10 @@ export default {
   height: 3rem;
   padding: 0 1rem;
   border: 1px solid lightgray;
+}
+
+.addressModal > input:first-child {
+  margin-top: 1rem;
 }
 
 .addressModal > span {
