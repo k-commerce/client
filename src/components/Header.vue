@@ -6,29 +6,48 @@
       <i class="fas fa-search" />
     </span>
     <i class="fas fa-shopping-cart" />
-    <i class="fas fa-user" />
+    <i class="fas fa-user" @click="memberModalFunc" />
   </header>
   <CategoryModal v-if="categoryModalVal" />
+  <MemberModal v-if="memberModalVal" @goTo="goTo" />
 </template>
 
 <script>
 import CategoryModal from '@/components/CategoryModal'
+import MemberModal from '@/components/MemberModal'
+
 export default {
   data () {
     return {
-      categoryModalVal: false
+      categoryModalVal: false,
+      memberModalVal: false
     }
   },
   components: {
-    CategoryModal
+    CategoryModal,
+    MemberModal
   },
   methods: {
     categoryModalFunc () {
       if (this.categoryModalVal === false) {
+        this.memberModalVal = false
         this.categoryModalVal = true
       } else {
         this.categoryModalVal = false
       }
+    },
+    memberModalFunc () {
+      if (this.memberModalVal === false) {
+        this.categoryModalVal = false
+        this.memberModalVal = true
+      } else {
+        this.memberModalVal = false
+      }
+    },
+    goTo (path) {
+      this.categoryModalVal = false
+      this.memberModalVal = false
+      this.$router.push(path)
     }
   }
 }

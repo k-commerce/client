@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import JoinView from '../views/JoinView.vue'
 import LoginView from '../views/LoginView.vue'
+import AddressListView from '../views/AddressListView.vue'
+import OrderView from '../views/OrderView.vue'
 import ItemListView from '../views/ItemListView.vue'
 import ItemView from '../views/ItemView.vue'
 import OrderHistoryView from '../views/OrderHistoryView.vue'
@@ -10,6 +12,8 @@ const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/join', name: 'join', component: JoinView },
   { path: '/login', name: 'login', component: LoginView },
+  { path: '/addresses', name: 'addressList', component: AddressListView },
+  { path: '/order', name: 'order', component: OrderView },
   { path: '/items', name: 'itemList', component: ItemListView },
   { path: '/item', name: 'item', component: ItemView },
   { path: '/orderhistory', name: 'orderHistory', component: OrderHistoryView }
