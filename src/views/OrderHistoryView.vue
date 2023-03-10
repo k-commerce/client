@@ -1,11 +1,12 @@
 <template>
   <main class="orderHistory">
+    <OrderDetailsModal class="modal" v-if="orderDetailsModalVal" @modalClose="modalClose" />
     <div class="top">주문 목록</div>
     <hr>
     <div class="container">
       <div class="containerTop">
         <small>2023.03.06</small>
-        <button>주문 상세보기 ></button>
+        <button @click="orderDetailsModalFunc">주문 상세보기 ></button>
       </div>
       <div class="containerBody">
         <div class="card">
@@ -16,48 +17,7 @@
               <strong>상품명</strong>
               <div>
                 <span>가격 / 수량</span>
-                <button>장바구니</button>
-              </div>
-            </span>
-          </div>
-          <div class="cardFoot">
-            <button>주문 취소 / 반품</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="cardBody">
-            <img src="@/assets/images/git.png" alt="">
-            <span class="orderInfo">
-              <strong>상품명</strong>
-              <div>
-                <span>가격 / 수량</span>
-                <button>장바구니</button>
-              </div>
-            </span>
-          </div>
-          <div class="cardFoot">
-            <button>주문 취소 / 반품</button>
-          </div>
-        </div>
-      </div>
-      <hr>
-    </div>
-
-    <div class="container">
-      <div class="containerTop">
-        <small>2023.03.06</small>
-        <button>주문 상세보기 ></button>
-      </div>
-      <div class="containerBody">
-        <div class="card">
-          <div class="cardBody">
-            <img src="@/assets/images/git.png" alt="">
-            <span class="orderInfo">
-              <strong>상품명</strong>
-              <div>
-                <span>가격 / 수량</span>
-                <button>장바구니</button>
+                <button>장바구니 담기</button>
               </div>
             </span>
           </div>
@@ -72,12 +32,25 @@
 </template>
 
 <script>
+import OrderDetailsModal from '@/components/OrderDetailsModal'
 export default {
   data () {
     return {
+      orderDetailsModalVal: false
     }
   },
+  components: {
+    OrderDetailsModal
+  },
   methods: {
+    orderDetailsModalFunc () {
+      if (this.orderDetailsModalVal === false) {
+        this.orderDetailsModalVal = true
+      }
+    },
+    modalClose () {
+      this.orderDetailsModalVal = false
+    }
   }
 }
 </script>
@@ -136,7 +109,7 @@ export default {
 }
 
 .orderInfo > div > button {
-  margin-left: 8rem;
+  margin-left: 6.6rem;
   float: right;
 }
 
