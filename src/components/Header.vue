@@ -1,53 +1,37 @@
 <template>
   <header>
-    <i class="fas fa-bars" @click="categoryModalFunc" />
+    <i class="fas fa-bars" @click="showMenu(1)" />
     <span>
       <input type="text" />
       <i class="fas fa-search" />
     </span>
     <i class="fas fa-shopping-cart" />
-    <i class="fas fa-user" @click="memberModalFunc" />
+    <i class="fas fa-user" @click="showMenu(2)" />
   </header>
-  <CategoryModal v-if="categoryModalVal" />
-  <MemberModal v-if="memberModalVal" @goTo="goTo" />
+  <CategoryMenu v-show="menu === 1" />
+  <MemberMenu v-show="menu === 2" @hideMenu="hideMenu" />
 </template>
 
 <script>
-import CategoryModal from '@/components/CategoryModal'
-import MemberModal from '@/components/MemberModal'
+import CategoryMenu from '@/components/CategoryMenu'
+import MemberMenu from '@/components/MemberMenu'
 
 export default {
+  components: {
+    CategoryMenu,
+    MemberMenu
+  },
   data () {
     return {
-      categoryModalVal: false,
-      memberModalVal: false
+      menu: 0
     }
   },
-  components: {
-    CategoryModal,
-    MemberModal
-  },
   methods: {
-    categoryModalFunc () {
-      if (this.categoryModalVal === false) {
-        this.memberModalVal = false
-        this.categoryModalVal = true
-      } else {
-        this.categoryModalVal = false
-      }
+    showMenu (menu) {
+      this.menu = this.menu === menu ? 0 : menu
     },
-    memberModalFunc () {
-      if (this.memberModalVal === false) {
-        this.categoryModalVal = false
-        this.memberModalVal = true
-      } else {
-        this.memberModalVal = false
-      }
-    },
-    goTo (path) {
-      this.categoryModalVal = false
-      this.memberModalVal = false
-      this.$router.push(path)
+    hideMenu () {
+      this.menu = 0
     }
   }
 }
