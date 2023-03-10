@@ -1,5 +1,5 @@
 <template>
-  <main class="addressList">
+  <main class="addressBook">
     <AddressModal v-if="addressModal" :address="address" @close="close" />
 
     <button @click="open(null)">배송지 추가</button>
@@ -46,17 +46,17 @@ export default {
 </script>
 
 <style scoped>
-.addressList {
+.addressBook {
   text-align: center;
 }
 
-.addressList > button {
+.addressBook > button {
   width: 24rem;
   height: 3rem;
   margin: 1rem 0;
 }
 
-.addressList > span {
+.addressBook > span {
   display: inline-block;
   width: 22rem;
   height: 10rem;
@@ -66,17 +66,17 @@ export default {
   text-align: left;
 }
 
-.addressList > span > span {
+.addressBook > span > span {
   display: flex;
   justify-content: space-between;
   height: 2rem;
 }
 
-.addressList > span > div {
+.addressBook > span > div {
   height: 6rem;
 }
 
-.addressList > span > span > button {
+.addressBook > span > span > button {
   width: 6rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <main class="orderDetailsModal">
+  <div class="orderDetailsModal">
     <div class="top">
       <span>주문상세</span>
       <i class="fas fa-times fa-lg" @click="modalClose"></i>
@@ -12,7 +12,7 @@
           <span class="left">상품 가격</span>
           <span class="right">123,456 원</span>
         </div>
-        <hr>
+        <hr />
         <div class="cardData">
           <span class="left">결제 수단</span>
           <span class="right">신용카드</span>
@@ -28,7 +28,7 @@
         <p class="phone">010-5481-1708</p>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -50,6 +50,7 @@ export default {
   width: 27rem;
   background-color: #f6f6f6;
   position: fixed;
+  height: 44rem;
 }
 
 .top {
@@ -101,5 +102,4 @@ export default {
   margin-top: 0rem;
   margin-bottom: 0.5rem;
 }
-
 </style>
