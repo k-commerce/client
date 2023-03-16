@@ -1,12 +1,36 @@
 <template>
   <main class="login">
-    <input type="text" placeholder="아이디" />
-    <input type="password" placeholder="비밀번호" />
-    <button>로그인</button>
+    <input type="text" placeholder="아이디" v-model="username" />
+    <input type="password" placeholder="비밀번호" v-model="password" />
+    <button @click="auth">로그인</button>
     <hr />
-    <button>회원가입</button>
+    <button @click="$router.push('/join')">회원가입</button>
   </main>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+  methods: {
+    auth () {
+      this.$axios.post('/api/auth', {
+        username: this.username,
+        password: this.password
+      }).then(response => {
+        if (response.status === 200) {
+          this.$store.commit('setPrincipal', response.data)
+          this.$router.go(-1)
+        }
+      })
+    }
+  }
+}
+</script>
 
 <style scoped>
 .login {

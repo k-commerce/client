@@ -1,13 +1,42 @@
 <template>
   <main class="join">
-    <input type="text" placeholder="아이디" />
-    <input type="password" placeholder="비밀번호" />
-    <input type="password" placeholder="비밀번호 확인" />
-    <input type="text" placeholder="이름" />
-    <input type="text" placeholder="휴대전화번호" />
-    <button>회원가입</button>
+    <input type="text" placeholder="아이디" v-model="username" />
+    <input type="password" placeholder="비밀번호" v-model="password" />
+    <input type="password" placeholder="비밀번호 확인" v-model="confirm" />
+    <input type="text" placeholder="이름" v-model="name" />
+    <input type="text" placeholder="휴대전화번호" v-model="phoneNumber" />
+    <button @click="join">회원가입</button>
   </main>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      username: '',
+      password: '',
+      confirm: '',
+      name: '',
+      phoneNumber: ''
+    }
+  },
+  methods: {
+    join () {
+      this.$axios.post('/api/members', {
+        username: this.username,
+        password: this.password,
+        name: this.name,
+        phoneNumber: this.phoneNumber
+      }).then(response => {
+        if (response.status === 200) {
+          alert('회원가입이 완료되었습니다.')
+          this.$router.push('/login')
+        }
+      })
+    }
+  }
+}
+</script>
 
 <style scoped>
 .join {
