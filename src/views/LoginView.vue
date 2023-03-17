@@ -18,15 +18,26 @@ export default {
   },
   methods: {
     auth () {
-      this.$axios.post('/api/auth', {
-        username: this.username,
-        password: this.password
-      }).then(response => {
-        if (response.status === 200) {
-          this.$store.commit('setPrincipal', response.data)
-          this.$router.go(-1)
-        }
-      })
+      if (this.validate()) {
+        this.$axios.post('/api/auth', {
+          username: this.username,
+          password: this.password
+        }).then(response => {
+          if (response.status === 200) {
+            this.$store.commit('setPrincipal', response.data)
+            this.$router.push('/')
+          }
+        })
+      }
+    },
+    validate () {
+      const usernameRegExp = /^[a-z]{1,9}$/
+      const passwordRegExp = /^[a-zA-Z0-9]{1,9}$/
+      if (!usernameRegExp.test(this.username) || !passwordRegExp.test(this.password)) {
+        alert('로그인에 실패하였습니다.')
+        return false
+      }
+      return true
     }
   }
 }

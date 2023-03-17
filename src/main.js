@@ -28,7 +28,7 @@ axios.interceptors.response.use(
       alert('로그인이 필요한 요청입니다.')
       store.commit('setAccessToken', '')
       store.commit('setPrincipal', null)
-      this.$router.push('/login')
+      router.push('/login')
     } else {
       alert(error.response.data.message)
     }
