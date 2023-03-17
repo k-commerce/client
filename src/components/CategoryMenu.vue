@@ -1,29 +1,11 @@
 <template>
   <div class="categoryMenu">
-    <ul class="parentCategory">
-      <li @click="openChildCategory1">
-        Category 1<i class="fas fa-caret-down fa-lg"></i>
+    <ul v-for="(parentCategory, idx) in categories" :key="idx" class="parentCategory">
+      <li @click="openChildCategory(idx)">
+        {{ parentCategory.name }}<i class="fas fa-caret-down fa-lg"></i>
       </li>
-      <ul class="childCategory" v-if="childCategory1Val">
-        <li>Category 1-1</li>
-        <li>Category 1-2</li>
-        <li>Category 1-3</li>
-      </ul>
-      <li @click="openChildCategory2">
-        Category 2<i class="fas fa-caret-down fa-lg"></i>
-      </li>
-      <ul class="childCategory" v-if="childCategory2Val">
-        <li>Category 2-1</li>
-        <li>Category 2-2</li>
-        <li>Category 2-3</li>
-      </ul>
-      <li @click="openChildCategory3">
-        Category 3<i class="fas fa-caret-down fa-lg"></i>
-      </li>
-      <ul class="childCategory" v-if="childCategory3Val">
-        <li>Category 3-1</li>
-        <li>Category 3-2</li>
-        <li>Category 3-3</li>
+      <ul v-for="(childCategory, idx2) in parentCategory.childList" :key="idx2" class="childCategory">
+        <li @click="goToItemList(childCategory.id)">{{ childCategory.name }}</li>
       </ul>
     </ul>
   </div>
@@ -33,32 +15,31 @@
 export default {
   data () {
     return {
-      childCategory1Val: false,
-      childCategory2Val: false,
-      childCategory3Val: false
+      categories: []
     }
   },
+  created () {
+    this.getCategories()
+  },
   methods: {
-    openChildCategory1 () {
-      if (this.childCategory1Val === false) {
-        this.childCategory1Val = true
-      } else {
-        this.childCategory1Val = false
-      }
+    getCategories () {
+      this.$axios.get('/api/categories')
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            if (response.data[i].depth === 0) {
+              this.categories.push(response.data[i])
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
-    openChildCategory2 () {
-      if (this.childCategory2Val === false) {
-        this.childCategory2Val = true
-      } else {
-        this.childCategory2Val = false
-      }
+    openChildCategory (idx) {
     },
-    openChildCategory3 () {
-      if (this.childCategory3Val === false) {
-        this.childCategory3Val = true
-      } else {
-        this.childCategory3Val = false
-      }
+    goToItemList (categoryId) {
+      this.$router.push({ name: 'itemList', params: { id: categoryId } })
+      this.$emit('hideMenu')
     }
   }
 }

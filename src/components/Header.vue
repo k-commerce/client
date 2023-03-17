@@ -8,7 +8,7 @@
     <i class="fas fa-shopping-cart" />
     <i class="fas fa-user" @click="showMenu(2)" />
   </header>
-  <CategoryMenu v-show="menu === 1" />
+  <CategoryMenu v-show="menu === 1" @hideMenu="hideMenu" />
   <MemberMenu v-show="menu === 2" @hideMenu="hideMenu" />
 </template>
 
