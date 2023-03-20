@@ -26,8 +26,20 @@ export default {
       menu: 0
     }
   },
+  computed: {
+    accessToken () {
+      return this.$store.getters.getAccessToken
+    },
+    principal () {
+      return this.$store.getters.getPrincipal
+    }
+  },
   methods: {
     showMenu (menu) {
+      if (menu === 2 && (!this.accessToken || !this.principal)) {
+        this.$router.push('/login')
+        return
+      }
       this.menu = this.menu === menu ? 0 : menu
     },
     hideMenu () {
