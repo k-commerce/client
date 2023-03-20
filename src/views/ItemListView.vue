@@ -7,33 +7,43 @@
       <li>Category 1-3</li>
     </ul>
     <div class="container">
-      <div class="card">
+      <div class="card" v-for="(item, idx) in itemList" :key="idx">
         <img src="@/assets/images/git.png" alt="">
         <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="@/assets/images/inte.png" alt="">
-        <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="@/assets/images/vs.png" alt="">
-        <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
+          <h5>{{ item.name }}</h5>
+          <p>{{ item.description }}</p>
+          <p>{{ item.price }}</p>
         </div>
       </div>
     </div>
   </main>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      categoryId: 0,
+      itemList: []
+    }
+  },
+  created () {
+    this.categoryId = this.$route.params.id
+    this.getItemList()
+  },
+  methods: {
+    getItemList () {
+      this.$axios.get('/api/items/' + this.categoryId)
+        .then((response) => {
+          this.itemList = response.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+}
+</script>
 
 <style scoped>
 .top {
