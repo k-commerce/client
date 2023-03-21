@@ -1,13 +1,11 @@
 <template>
   <main class="itemList">
-    <div class="top">Category</div>
-    <ul>
-      <li>Category 1-1</li>
-      <li>Category 1-2</li>
-      <li>Category 1-3</li>
+    <div class="top">{{ categoryList.name }}</div>
+    <ul v-for="(category, idx) in categoryList.childList" :key="idx">
+      <li @click="goToItemList(category.id)">{{ category.name }}</li>
     </ul>
     <div class="container">
-      <div class="card" v-for="(item, idx) in itemList" :key="idx">
+      <div class="card" v-for="(item, idx) in itemList" :key="idx" @click="goToItem(item.id)">
         <img src="@/assets/images/git.png" alt="">
         <div>
           <h5>{{ item.name }}</h5>
@@ -24,12 +22,14 @@ export default {
   data () {
     return {
       categoryId: 0,
-      itemList: []
+      itemList: [],
+      categoryList: []
     }
   },
   created () {
     this.categoryId = this.$route.params.id
     this.getItemList()
+    this.getCategories()
   },
   methods: {
     getItemList () {
@@ -40,6 +40,30 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    getCategories () {
+      this.$axios.get('/api/categories')
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            if (response.data[i].depth === 0) {
+              for (let j = 0; j < response.data[i].childList.length; j++) {
+                if (response.data[i].childList[j].id === parseInt(this.categoryId)) {
+                  this.categoryList = response.data[i]
+                  break
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    goToItemList (categoryId) {
+      this.$router.push({ name: 'itemList', params: { id: categoryId } })
+    },
+    goToItem (itemId) {
+      this.$router.push({ name: 'item', params: { id: itemId } })
     }
   }
 }
@@ -77,6 +101,10 @@ export default {
 
 .card {
   margin: 0.8rem;
+}
+
+.card:hover {
+  cursor: pointer;
 }
 
 .card > img {
