@@ -27,9 +27,9 @@ export default {
     }
   },
   created () {
-    this.categoryId = this.$route.params.id
-    this.getItemList()
+    this.categoryId = parseInt(this.$route.params.id)
     this.getCategories()
+    this.getItemList()
   },
   methods: {
     getItemList () {
@@ -47,7 +47,7 @@ export default {
           for (let i = 0; i < response.data.length; i++) {
             if (response.data[i].depth === 0) {
               for (let j = 0; j < response.data[i].childList.length; j++) {
-                if (response.data[i].childList[j].id === parseInt(this.categoryId)) {
+                if (response.data[i].childList[j].id === this.categoryId) {
                   this.categoryList = response.data[i]
                   break
                 }
