@@ -33,7 +33,11 @@ export default {
   },
   methods: {
     getItemList () {
-      this.$axios.get('/api/items/' + this.categoryId)
+      this.$axios.get('/api/items', {
+        params: {
+          categoryid: this.categoryId
+        }
+      })
         .then((response) => {
           this.itemList = response.data
         })
