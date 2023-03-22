@@ -1,6 +1,7 @@
 <template>
   <header>
     <i class="fas fa-bars" @click="showMenu(1)" />
+    <i class="fas fa-home" @click="goHome" />
     <span>
       <input type="text" />
       <i class="fas fa-search" />
@@ -45,6 +46,10 @@ export default {
     },
     hideMenu () {
       this.menu = 0
+    },
+    goHome () {
+      this.$router.push('/')
+      this.menu = 0
     }
   }
 }
@@ -74,7 +79,7 @@ header > span {
 }
 
 header > span > input {
-  width: 12rem;
+  width: 10rem;
   border: none;
   outline: none;
 }
