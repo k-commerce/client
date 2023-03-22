@@ -35,7 +35,7 @@ export default {
     getItemList () {
       this.$axios.get('/api/items', {
         params: {
-          categoryid: this.categoryId
+          categoryId: this.categoryId
         }
       })
         .then((response) => {
