@@ -9,7 +9,7 @@
       <div>{{ '(' + address.postcode + ') ' + address.selected + ' ' + address.detailed }}</div>
       <span>
         <button @click="open(address)">수정</button>
-        <button>삭제</button>
+        <button @click="deleteAddress(address)">삭제</button>
       </span>
     </span>
   </main>
@@ -26,21 +26,38 @@ export default {
     return {
       addressModal: false,
       address: null,
-      addressList: [
-        { id: 1, name: '집', postcode: '02005', selected: '서울특별시 중랑구 동일로163길 12-10', detailed: '505호' },
-        { id: 2, name: '학교', postcode: '05006', selected: '서울특별시 광진구 능동로 209', detailed: '대양AI센터' },
-        { id: 3, name: '직장', postcode: '05018', selected: '서울특별시 광진구 아차산로 225 2층', detailed: '설빙 건대지점' }
-      ]
+      addressList: null
     }
   },
   methods: {
+    getAddressList () {
+      this.$axios.get('/api/addresses', {
+      }).then(response => {
+        if (response.status === 200) {
+          this.addressList = response.data
+        }
+      })
+    },
+    deleteAddress (address) {
+      this.$axios.delete('/api/addresses/' + address.id, {
+      }).then(response => {
+        if (response.status === 200) {
+          alert('배송지를 삭제하였습니다.')
+          this.getAddressList()
+        }
+      })
+    },
     open (address) {
       this.addressModal = true
       this.address = address
     },
     close () {
+      this.getAddressList()
       this.addressModal = false
     }
+  },
+  created () {
+    this.getAddressList()
   }
 }
 </script>

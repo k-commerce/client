@@ -14,17 +14,24 @@
 export default {
   data () {
     return {
-      addressList: [
-        { id: 1, name: '집', postcode: '02005', selected: '서울특별시 중랑구 동일로163길 12-10', detailed: '505호' },
-        { id: 2, name: '학교', postcode: '05006', selected: '서울특별시 광진구 능동로 209', detailed: '대양AI센터' },
-        { id: 3, name: '직장', postcode: '05018', selected: '서울특별시 광진구 아차산로 225 2층', detailed: '설빙 건대지점' }
-      ]
+      addressList: null
     }
   },
   methods: {
+    getAddressList () {
+      this.$axios.get('/api/addresses', {
+      }).then(response => {
+        if (response.status === 200) {
+          this.addressList = response.data
+        }
+      })
+    },
     close (address) {
       this.$emit('close', address)
     }
+  },
+  created () {
+    this.getAddressList()
   }
 }
 </script>
