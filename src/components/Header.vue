@@ -38,6 +38,7 @@ export default {
     showMenu (menu) {
       if (menu === 2 && (!this.accessToken || !this.principal)) {
         this.$router.push('/login')
+        this.menu = 0
         return
       }
       this.menu = this.menu === menu ? 0 : menu

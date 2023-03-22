@@ -19,7 +19,7 @@ export default {
     logout () {
       this.$store.commit('setAccessToken', '')
       this.$store.commit('setPrincipal', null)
-      this.$router.push('/login')
+      this.goTo('/login')
     }
   }
 }
