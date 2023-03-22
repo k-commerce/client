@@ -1,39 +1,77 @@
 <template>
   <main class="itemList">
-    <div class="top">Category</div>
-    <ul>
-      <li>Category 1-1</li>
-      <li>Category 1-2</li>
-      <li>Category 1-3</li>
+    <div class="top">{{ categoryList.name }}</div>
+    <ul v-for="(category, idx) in categoryList.childList" :key="idx">
+      <li @click="goToItemList(category.id)">{{ category.name }}</li>
     </ul>
     <div class="container">
-      <div class="card">
+      <div class="card" v-for="(item, idx) in itemList" :key="idx" @click="goToItem(item.id)">
         <img src="@/assets/images/git.png" alt="">
         <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="@/assets/images/inte.png" alt="">
-        <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
-        </div>
-      </div>
-      <div class="card">
-        <img src="@/assets/images/vs.png" alt="">
-        <div>
-          <h5>상품명</h5>
-          <p>상품설명상품설명상품설명상품설명상품설명상품설명</p>
-          <p>가격</p>
+          <h5>{{ item.name }}</h5>
+          <p>{{ item.description }}</p>
+          <p>{{ item.price }}</p>
         </div>
       </div>
     </div>
   </main>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      categoryId: 0,
+      itemList: [],
+      categoryList: []
+    }
+  },
+  created () {
+    this.categoryId = parseInt(this.$route.params.id)
+    this.getCategories()
+    this.getItemList()
+  },
+  methods: {
+    getItemList () {
+      this.$axios.get('/api/items', {
+        params: {
+          categoryId: this.categoryId
+        }
+      })
+        .then((response) => {
+          this.itemList = response.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    getCategories () {
+      this.$axios.get('/api/categories')
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            if (response.data[i].depth === 0) {
+              for (let j = 0; j < response.data[i].childList.length; j++) {
+                if (response.data[i].childList[j].id === this.categoryId) {
+                  this.categoryList = response.data[i]
+                  break
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    goToItemList (categoryId) {
+      this.$router.push({ name: 'itemList', params: { id: categoryId } })
+    },
+    goToItem (itemId) {
+      this.$router.push({ name: 'item', params: { id: itemId } })
+    }
+  }
+}
+</script>
 
 <style scoped>
 .top {
@@ -67,6 +105,10 @@
 
 .card {
   margin: 0.8rem;
+}
+
+.card:hover {
+  cursor: pointer;
 }
 
 .card > img {
