@@ -9,9 +9,9 @@ import OrderView from '@/views/OrderView'
 import OrderHistoryView from '@/views/OrderHistoryView'
 import AddressBookView from '@/views/AddressBookView'
 
-const isAuthenticated = store.getters.getAccessToken && store.getters.getPrincipal
+const isAuthenticated = () => store.getters.getAccessToken && store.getters.getPrincipal
 
-const requireAuthentication = () => (to, from, next) => next(isAuthenticated ? null : '/login')
+const requireAuthentication = () => (to, from, next) => next(isAuthenticated() ? null : '/login')
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
