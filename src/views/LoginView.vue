@@ -25,7 +25,7 @@ export default {
         }).then(response => {
           if (response.status === 200) {
             this.$store.commit('setPrincipal', response.data)
-            this.$router.push('/')
+            this.$router.push(this.$route.query.redirect || '/')
           }
         })
       }
