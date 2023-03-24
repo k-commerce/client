@@ -28,17 +28,22 @@ export default {
     }
   },
   computed: {
-    accessToken () {
-      return this.$store.getters.getAccessToken
-    },
-    principal () {
-      return this.$store.getters.getPrincipal
+    isAuthenticated () {
+      return this.$store.getters.getAccessToken && this.$store.getters.getPrincipal
     }
   },
   methods: {
     showMenu (menu) {
-      if (menu === 2 && (!this.accessToken || !this.principal)) {
-        this.$router.push('/login')
+      if (menu === 2 && !this.isAuthenticated) {
+        let redirect = ''
+        if (this.$route.name === 'login') {
+          redirect = this.$route.fullPath
+        } else if (this.$route.name === 'join') {
+          redirect = '/login'
+        } else {
+          redirect = '/login?redirect=' + this.$route.fullPath
+        }
+        this.$router.push(redirect)
         this.menu = 0
         return
       }

@@ -11,7 +11,7 @@ import AddressBookView from '@/views/AddressBookView'
 
 const isAuthenticated = () => store.getters.getAccessToken && store.getters.getPrincipal
 
-const requireAuthentication = () => (to, from, next) => next(isAuthenticated() ? null : '/login')
+const requireAuthentication = () => (to, from, next) => next(isAuthenticated() ? null : '/login?redirect=' + to.fullPath)
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
