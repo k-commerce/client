@@ -2,23 +2,23 @@
   <main class="item">
     <img src="@/assets/images/git.png" alt="">
     <div class="itemInfo">
-      <h5>상품명</h5>
-      <p>50,000원</p>
+      <h5>{{ item.name }}</h5>
+      <p>{{ item.price }} 원</p>
     </div>
     <hr>
     <div class="calculation">
       <button @click="countMinus">-</button>
       <input type="text" v-model="count">
       <button @click="countPlus">+</button>
-      <p>123,456원</p>
+      <p>{{ item.price * count }} 원</p>
     </div>
     <hr>
     <div class="buttons">
       <button>장바구니</button>
-      <button>바로구매</button>
+      <button @click="goToOrder">바로구매</button>
     </div>
     <div>
-      상세 정보 상세 정보 상세 정보 상세 정보 상세 정보 상세 정보
+      {{ item.description }}
     </div>
   </main>
 </template>
@@ -27,8 +27,14 @@
 export default {
   data () {
     return {
-      count: 1
+      itemId: 0,
+      count: 1,
+      item: []
     }
+  },
+  created () {
+    this.itemId = parseInt(this.$route.params.id)
+    this.getItem()
   },
   methods: {
     countMinus () {
@@ -38,6 +44,19 @@ export default {
     },
     countPlus () {
       this.count++
+    },
+    getItem () {
+      this.$axios.get('/api/items/' + this.itemId)
+        .then((response) => {
+          this.item = response.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    goToOrder () {
+      this.$store.commit('setOrderCheck', [{ id: this.itemId, count: this.count }])
+      this.$router.push('/order')
     }
   }
 }

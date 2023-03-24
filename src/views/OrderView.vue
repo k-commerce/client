@@ -8,8 +8,8 @@
         <img />
         <div>
           <div>{{ orderItem.name }}</div>
-          <div>{{ orderItem.count }}개</div>
-          <div>{{ orderItem.orderPrice }}원</div>
+          <div>{{ orderItem.count }} 개</div>
+          <div>{{ orderItem.price * orderItem.count }} 원</div>
         </div>
       </div>
     </span>
@@ -34,7 +34,7 @@
 
     <span>
       <span>결제 금액</span>
-      <div>총 90000원</div>
+      <div>총 {{ totalPrice }} 원</div>
       <button>결제하기</button>
     </span>
   </main>
@@ -52,14 +52,17 @@ export default {
   data () {
     return {
       addressListModal: false,
-      orderItemList: [
-        { name: '퀄팅 자켓', count: 1, orderPrice: 50000 },
-        { name: '트레이닝 팬츠', count: 2, orderPrice: 40000 }
-      ],
       postcode: '',
       selected: '',
-      detailed: ''
+      detailed: '',
+      orderCheck: [],
+      orderItemList: [],
+      totalPrice: 0
     }
+  },
+  created () {
+    this.orderCheck = this.$store.getters.getOrderCheck
+    this.getOrderItemList()
   },
   methods: {
     findPostcode () {
@@ -80,6 +83,27 @@ export default {
         this.selected = address.selected
         this.detailed = address.detailed
       }
+    },
+    getOrderItemList () {
+      const itemIds = []
+      for (let i = 0; i < this.orderCheck.length; i++) {
+        itemIds.push(this.orderCheck[i].id)
+      }
+      this.$axios.get('/api/items', {
+        params: {
+          itemIds: itemIds.join(',')
+        }
+      })
+        .then((response) => {
+          for (let i = 0; i < response.data.length; i++) {
+            response.data[i].count = this.orderCheck[i].count
+            this.orderItemList.push(response.data[i])
+            this.totalPrice += response.data[i].price * response.data[i].count
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 }
