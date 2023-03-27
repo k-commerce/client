@@ -41,9 +41,6 @@ export default {
         .then((response) => {
           this.itemList = response.data
         })
-        .catch((error) => {
-          console.log(error)
-        })
     },
     getCategories () {
       this.$axios.get('/api/categories')
@@ -58,9 +55,6 @@ export default {
               }
             }
           }
-        })
-        .catch((error) => {
-          console.log(error)
         })
     },
     goToItemList (categoryId) {

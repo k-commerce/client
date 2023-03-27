@@ -16,9 +16,9 @@
 
     <span>
       <span>배송 정보</span>
-      <label><input type="checkbox" />주문자와 동일</label>
-      <input type="text" placeholder="받는 사람" />
-      <input type="text" placeholder="연락처" />
+      <label><input type="checkbox" v-model="checked" @change="check"/>주문자와 동일</label>
+      <input type="text" v-model="name" placeholder="받는 사람" @input="onChange()" />
+      <input type="text" v-model="phoneNumber" placeholder="연락처" @input="onChange()" />
       <button @click="open">배송지 목록</button>
       <input type="text" placeholder="우편번호" readonly v-model="postcode" @click="findPostcode" />
       <input type="text" placeholder="도로명 주소 / 지번 주소" readonly v-model="selected" @click="findPostcode" />
@@ -28,14 +28,14 @@
 
     <span>
       <span>결제 방식</span>
-      <label><input type="radio" name="payment" />신용카드</label>
-      <label><input type="radio" name="payment" />무통장입금</label>
+      <label><input type="radio" v-model="payment" value="CARD" />신용카드</label>
+      <label><input type="radio" v-model="payment" value="DEPOSIT" />무통장입금</label>
     </span>
 
     <span>
       <span>결제 금액</span>
       <div>총 {{ totalPrice }} 원</div>
-      <button>결제하기</button>
+      <button @click="pay">결제하기</button>
     </span>
   </main>
 </template>
@@ -55,9 +55,16 @@ export default {
       postcode: '',
       selected: '',
       detailed: '',
+      checked: false,
+      name: '',
+      phoneNumber: '',
+      payment: '',
       orderCheck: [],
       orderItemList: [],
-      totalPrice: 0
+      totalPrice: 0,
+      itemIdList: [],
+      countList: [],
+      totalPriceList: []
     }
   },
   created () {
@@ -85,13 +92,14 @@ export default {
       }
     },
     getOrderItemList () {
-      const itemIds = []
       for (let i = 0; i < this.orderCheck.length; i++) {
-        itemIds.push(this.orderCheck[i].id)
+        this.itemIdList.push(this.orderCheck[i].id)
+        this.countList.push(this.orderCheck[i].count)
+        this.totalPriceList.push(this.orderCheck[i].id * this.orderCheck[i].count)
       }
       this.$axios.get('/api/items', {
         params: {
-          itemIds: itemIds.join(',')
+          itemIds: this.itemIdList.join(',')
         }
       })
         .then((response) => {
@@ -101,9 +109,37 @@ export default {
             this.totalPrice += response.data[i].price * response.data[i].count
           }
         })
-        .catch((error) => {
-          console.log(error)
+    },
+    onChange () {
+      this.checked = false
+    },
+    pay () {
+      this.$axios.post('/api/orders', {
+        postcode: this.postcode,
+        selected: this.selected,
+        detailed: this.detailed,
+        payment: this.payment,
+        itemIdList: this.itemIdList,
+        countList: this.countList,
+        totalPriceList: this.totalPriceList,
+        name: this.name,
+        phoneNumber: this.phoneNumber
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            alert('주문이 완료되었습니다.')
+            this.$router.push('/')
+          }
         })
+    },
+    check () {
+      if (this.checked === true) {
+        this.name = this.$store.getters.getPrincipal.name
+        this.phoneNumber = this.$store.getters.getPrincipal.phoneNumber
+      } else {
+        this.name = ''
+        this.phoneNumber = ''
+      }
     }
   }
 }
