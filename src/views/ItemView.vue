@@ -1,25 +1,27 @@
 <template>
   <main class="item">
-    <img src="@/assets/images/git.png" alt="">
-    <div class="itemInfo">
-      <h5>{{ item.name }}</h5>
-      <p>{{ item.price }} 원</p>
+    <img src="@/assets/images/git.png" />
+
+    <div>
+      <span>{{ item.name }}</span>
+      <span>{{ item.price }} 원</span>
     </div>
-    <hr>
-    <div class="calculation">
-      <button @click="countMinus">-</button>
-      <input type="text" v-model="count">
-      <button @click="countPlus">+</button>
-      <p>{{ item.price * count }} 원</p>
+
+    <div>
+      <span>
+        <button @click="countMinus">-</button>
+        <input type="text" v-model="count" />
+        <button @click="countPlus">+</button>
+      </span>
+      <span>총 {{ item.price * count }} 원</span>
     </div>
-    <hr>
-    <div class="buttons">
+
+    <div>
       <button>장바구니</button>
       <button @click="goToOrder">바로구매</button>
     </div>
-    <div>
-      {{ item.description }}
-    </div>
+
+    <div>{{ item.description }}</div>
   </main>
 </template>
 
@@ -28,15 +30,17 @@ export default {
   data () {
     return {
       itemId: 0,
-      count: 1,
-      item: []
+      item: null,
+      count: 1
     }
   },
-  created () {
-    this.itemId = parseInt(this.$route.params.id)
-    this.getItem()
-  },
   methods: {
+    getItem () {
+      this.$axios.get('/api/items/' + this.itemId)
+        .then(response => {
+          this.item = response.data
+        })
+    },
     countMinus () {
       if (this.count > 1) {
         this.count--
@@ -45,55 +49,55 @@ export default {
     countPlus () {
       this.count++
     },
-    getItem () {
-      this.$axios.get('/api/items/' + this.itemId)
-        .then((response) => {
-          this.item = response.data
-        })
-    },
     goToOrder () {
       this.$store.commit('setOrderCheck', [{ id: this.itemId, count: this.count }])
       this.$router.push('/order')
     }
+  },
+  created () {
+    this.itemId = parseInt(this.$route.params.id)
+    this.getItem()
   }
 }
 </script>
 
 <style scoped>
 .item > img {
-  width: 20rem;
-  object-fit: cover;
   display: block;
-  margin: auto;
+  width: 20rem;
+  height: 20rem;
+  margin: 1rem auto;
 }
 
-.itemInfo > h5 {
-  margin: 0.5rem;
+.item > div:nth-child(2) {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
 }
 
-.itemInfo > p {
-  margin-left: 0.5rem;
+.item > div:nth-child(3) {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
-.calculation > p {
-  display: inline-block;
-  margin: 0px;
-  margin-left: 9rem;
-}
-
-.calculation > input {
+.item > div:nth-child(3) > span > input {
   text-align: center;
 }
 
-.buttons {
+.item > div:nth-child(4) {
   text-align: center;
-  margin-bottom: 1rem;
 }
-.buttons > button {
+
+.item > div:nth-child(4) > button {
   width: 10rem;
   height: 2rem;
-  margin-top: 1rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
+  margin: 1rem;
+}
+
+.item > div:nth-child(5) {
+  padding: 1rem;
 }
 </style>
