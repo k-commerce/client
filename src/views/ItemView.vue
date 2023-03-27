@@ -50,9 +50,6 @@ export default {
         .then((response) => {
           this.item = response.data
         })
-        .catch((error) => {
-          console.log(error)
-        })
     },
     goToOrder () {
       this.$store.commit('setOrderCheck', [{ id: this.itemId, count: this.count }])
