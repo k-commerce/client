@@ -1,18 +1,21 @@
 <template>
   <main class="itemList">
-    <div class="top">{{ categoryList.name }}</div>
-    <ul v-for="(category, idx) in categoryList.childList" :key="idx">
-      <li @click="goToItemList(category.id)">{{ category.name }}</li>
-    </ul>
-    <div class="container">
-      <div class="card" v-for="(item, idx) in itemList" :key="idx" @click="goToItem(item.id)">
-        <img src="@/assets/images/git.png" alt="">
-        <div>
-          <h5>{{ item.name }}</h5>
-          <p>{{ item.description }}</p>
-          <p>{{ item.price }}</p>
-        </div>
-      </div>
+    <div v-if="category">
+      <div>{{ category.name }}</div>
+      <ul>
+        <li v-for="child in category.childList" :key="child" @click="goToItemList(child)">
+          {{ child.name }}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <span v-for="item in itemList" :key="item" @click="goToItem(item)">
+        <img src="@/assets/images/git.png" />
+        <div>{{ item.name }}</div>
+        <div>{{ item.price }} 원</div>
+        <div>{{ item.description }}</div>
+      </span>
     </div>
   </main>
 </template>
@@ -22,97 +25,96 @@ export default {
   data () {
     return {
       categoryId: 0,
-      itemList: [],
-      categoryList: []
+      category: null,
+      itemList: []
     }
   },
-  created () {
-    this.categoryId = parseInt(this.$route.params.id)
-    this.getCategories()
-    this.getItemList()
-  },
   methods: {
-    getItemList () {
-      this.$axios.get('/api/items', {
-        params: {
-          categoryId: this.categoryId
-        }
-      })
-        .then((response) => {
-          this.itemList = response.data
-        })
-    },
-    getCategories () {
+    getCategoryList () {
       this.$axios.get('/api/categories')
-        .then((response) => {
-          for (let i = 0; i < response.data.length; i++) {
-            if (response.data[i].depth === 0) {
-              for (let j = 0; j < response.data[i].childList.length; j++) {
-                if (response.data[i].childList[j].id === this.categoryId) {
-                  this.categoryList = response.data[i]
-                  break
+        .then(response => {
+          if (response.status === 200) {
+            const categoryList = response.data
+            for (const category of categoryList) {
+              const childList = category.childList
+              for (const child of childList) {
+                if (child.id === this.categoryId) {
+                  this.category = category
                 }
               }
             }
           }
         })
     },
-    goToItemList (categoryId) {
-      this.$router.push({ name: 'itemList', params: { id: categoryId } })
+    getItemList () {
+      this.$axios.get('/api/items', {
+        params: {
+          categoryId: this.categoryId
+        }
+      }).then(response => {
+        if (response.status === 200) {
+          this.itemList = response.data
+        }
+      })
     },
-    goToItem (itemId) {
-      this.$router.push({ name: 'item', params: { id: itemId } })
+    goToItemList (category) {
+      this.$router.push({ name: 'itemList', params: { id: category.id } })
+    },
+    goToItem (item) {
+      this.$router.push({ name: 'item', params: { id: item.id } })
     }
+  },
+  created () {
+    this.categoryId = parseInt(this.$route.params.id)
+    this.getCategoryList()
+    this.getItemList()
   }
 }
 </script>
 
 <style scoped>
-.top {
+.itemList > div:first-child {
   text-align: center;
-  margin-bottom: 0.8rem;
 }
 
-.itemList > ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-.itemList > ul > li {
+.itemList > div:first-child > div {
+  padding: 1rem;
   border: 1px solid #ddd;
-  margin-top: -1px;
   background-color: #f6f6f6;
-  padding: 0.8rem;
-  cursor: pointer;
-  text-align: center;
 }
-.itemList > ul > li:hover {
+
+.itemList > div:first-child > ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.itemList > div:first-child > ul > li {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.itemList > div:first-child > ul > li:hover {
   background-color: aliceblue;
 }
 
-.container {
+.itemList > div:last-child {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-.card {
-  margin: 0.8rem;
-}
-
-.card:hover {
+.itemList > div:last-child > span {
+  padding: 1rem;
   cursor: pointer;
 }
 
-.card > img {
-  width: 10rem;
-  object-fit: cover;
-  display: block;
-  margin: auto;
+.itemList > div:last-child > span:hover {
+  background-color: aliceblue;
 }
 
-.card > div > h5 {
-  margin: 0.5rem;
+.itemList > div:last-child > span > img {
+  width: 10rem;
+  height: 10rem;
 }
 </style>
