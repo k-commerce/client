@@ -1,12 +1,17 @@
 <template>
   <div class="categoryMenu">
-    <ul v-for="(parentCategory, idx) in categories" :key="idx" class="parentCategory">
-      <li @click="openChildCategory(idx)">
-        {{ parentCategory.name }}<i class="fas fa-caret-down fa-lg"></i>
+    <ul>
+      <li v-for="category in categoryList" :key="category">
+        <div @click="showChildList(category)">
+          <span>{{ category.name }}</span>
+          <i class="fas fa-caret-down fa-lg" />
+        </div>
+        <ul v-show="parent === category">
+          <li v-for="child in category.childList" :key="child" @click="goToItemList(child)">
+            {{ child.name }}
+          </li>
+        </ul>
       </li>
-      <ul v-for="(childCategory, idx2) in parentCategory.childList" :key="idx2" class="childCategory">
-        <li @click="goToItemList(childCategory.id)">{{ childCategory.name }}</li>
-      </ul>
     </ul>
   </div>
 </template>
@@ -15,89 +20,81 @@
 export default {
   data () {
     return {
-      categories: []
+      categoryList: [],
+      parent: null
     }
   },
-  created () {
-    this.getCategories()
-  },
   methods: {
-    getCategories () {
+    getCategoryList () {
       this.$axios.get('/api/categories')
-        .then((response) => {
-          for (let i = 0; i < response.data.length; i++) {
-            if (response.data[i].depth === 0) {
-              this.categories.push(response.data[i])
+        .then(response => {
+          if (response.status === 200) {
+            const categoryList = response.data
+            for (const category of categoryList) {
+              if (category.depth === 0) {
+                this.categoryList.push(category)
+              }
             }
           }
         })
     },
-    openChildCategory (idx) {
+    showChildList (category) {
+      this.parent = this.parent === category ? 0 : category
     },
-    goToItemList (categoryId) {
-      this.$router.push({ name: 'itemList', params: { id: categoryId } })
+    goToItemList (category) {
+      this.$router.push({ name: 'itemList', params: { id: category.id } })
       this.$emit('hideMenu')
     }
+  },
+  created () {
+    this.getCategoryList()
   }
 }
 </script>
 
 <style scoped>
 .categoryMenu {
-  width: 27rem;
-  background-color: #f6f6f6;
   position: fixed;
-  height: 44rem;
   z-index: 2;
-}
-
-.parentCategory {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-.parentCategory:hover {
-  background-color: aliceblue;
-}
-
-.parentCategory > li {
-  border: 1px solid #ddd;
-  margin-top: -1px;
+  width: 27rem;
+  height: 44rem;
   background-color: #f6f6f6;
-  padding: 0.6rem;
+}
+
+.categoryMenu > ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.categoryMenu > ul > li > div {
+  padding: 1rem;
+  border: 1px solid #ddd;
   cursor: pointer;
 }
 
-.parentCategory > li:hover {
+.categoryMenu > ul > li > div:hover {
   background-color: aliceblue;
 }
 
-.parentCategory > li > i {
+.categoryMenu > ul > li > div > i {
   float: right;
 }
 
-.childCategory {
-  list-style-type: none;
-  padding: 0;
+.categoryMenu > ul > li > ul {
   margin: 0;
-  cursor: pointer;
-}
-
-.childCategory:hover {
-  background-color: aliceblue;
-}
-
-.childCategory > li {
-  border: 1px solid #ddd;
-  margin-top: -1px;
+  padding: 0;
+  list-style-type: none;
   background-color: white;
-  padding: 0.6rem;
+}
+
+.categoryMenu > ul > li > ul > li {
+  padding: 1rem;
+  border: 1px solid #ddd;
   cursor: pointer;
 }
 
-.childCategory > li:hover {
+.categoryMenu > ul > li > ul > li:hover {
   background-color: aliceblue;
 }
 </style>
