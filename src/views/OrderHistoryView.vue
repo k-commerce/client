@@ -22,7 +22,7 @@
             </span>
           </div>
           <div class="cardFoot">
-            <button @click="orderCancel(orderItem[0].id)">주문 취소 / 반품</button>
+            <button @click="orderCancel(orderItem[0].order.id, orderItem[0].id)">주문 취소 / 반품</button>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
             </span>
           </div>
           <div class="cardFoot">
-            <button @click="orderCancel(oi.id)">주문 취소 / 반품</button>
+            <button @click="orderCancel(oi.order.id, oi.id)">주문 취소 / 반품</button>
           </div>
         </div>
       </div>
@@ -88,8 +88,10 @@ export default {
           this.orderItemList.reverse()
         })
     },
-    orderCancel (orderItemId) {
-      this.$axios.put('/api/orders/' + orderItemId)
+    orderCancel (orderId, orderItemId) {
+      this.$axios.put('/api/orders/' + orderId, {
+        orderItemId: orderItemId
+      })
         .then((response) => {
           if (response.status === 200) {
             alert('주문이 취소되었습니다.')
