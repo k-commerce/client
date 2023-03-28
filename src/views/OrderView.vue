@@ -8,17 +8,17 @@
         <img />
         <div>
           <div>{{ orderItem.name }}</div>
-          <div>{{ orderItem.count }} 개</div>
-          <div>{{ orderItem.price * orderItem.count }} 원</div>
+          <div>{{ orderItem.quantity }} 개</div>
+          <div>{{ orderItem.price * orderItem.quantity }} 원</div>
         </div>
       </div>
     </span>
 
     <span>
       <span>배송 정보</span>
-      <label><input type="checkbox" v-model="checked" @change="check"/>주문자와 동일</label>
-      <input type="text" v-model="name" placeholder="받는 사람" @input="onChange()" />
-      <input type="text" v-model="phoneNumber" placeholder="연락처" @input="onChange()" />
+      <label><input type="checkbox" v-model="checked" @change="check" />주문자와 동일</label>
+      <input type="text" placeholder="받는 사람" v-model="name" @input="oninput" />
+      <input type="text" placeholder="연락처" v-model="phoneNumber" @input="oninput" />
       <button @click="open">배송지 목록</button>
       <input type="text" placeholder="우편번호" readonly v-model="postcode" @click="findPostcode" />
       <input type="text" placeholder="도로명 주소 / 지번 주소" readonly v-model="selected" @click="findPostcode" />
@@ -28,14 +28,14 @@
 
     <span>
       <span>결제 방식</span>
-      <label><input type="radio" v-model="payment" value="CARD" />신용카드</label>
-      <label><input type="radio" v-model="payment" value="DEPOSIT" />무통장입금</label>
+      <label><input type="radio" value="CARD" v-model="payment" />신용카드</label>
+      <label><input type="radio" value="DEPOSIT" v-model="payment" />무통장입금</label>
     </span>
 
     <span>
       <span>결제 금액</span>
       <div>총 {{ totalPrice }} 원</div>
-      <button @click="pay">결제하기</button>
+      <button @click="createOrder">주문하기</button>
     </span>
   </main>
 </template>
@@ -52,26 +52,70 @@ export default {
   data () {
     return {
       addressListModal: false,
-      postcode: '',
-      selected: '',
-      detailed: '',
+      orderItemList: [],
       checked: false,
       name: '',
       phoneNumber: '',
+      postcode: '',
+      selected: '',
+      detailed: '',
       payment: '',
-      orderCheck: [],
-      orderItemList: [],
-      totalPrice: 0,
-      itemIdList: [],
-      countList: [],
-      totalPriceList: []
+      totalPrice: 0
     }
   },
-  created () {
-    this.orderCheck = this.$store.getters.getOrderCheck
-    this.getOrderItemList()
+  computed: {
+    orderCheck () {
+      return this.$store.getters.getOrderCheck
+    },
+    principal () {
+      return this.$store.getters.getPrincipal
+    }
   },
   methods: {
+    getItemList () {
+      this.$axios.get('/api/items', {
+        params: {
+          itemIdList: Object.keys(this.orderCheck).join(',')
+        }
+      }).then(response => {
+        this.initOrderItemList(response.data)
+      })
+    },
+    initOrderItemList (itemList) {
+      for (const { id, name, price, description } of itemList) {
+        const quantity = this.orderCheck[id]
+        this.orderItemList.push({ id, name, price, description, quantity })
+        this.totalPrice += price * quantity
+      }
+    },
+    createOrder () {
+      this.$axios.post('/api/orders', {
+        orderItemList: this.orderItemList,
+        name: this.name,
+        phoneNumber: this.phoneNumber,
+        postcode: this.postcode,
+        selected: this.selected,
+        detailed: this.detailed,
+        payment: this.payment
+      }).then(response => {
+        if (response.status === 200) {
+          alert('주문이 완료되었습니다.')
+          this.$router.push('/')
+        }
+      })
+    },
+    check () {
+      if (this.checked === true) {
+        this.name = this.principal.name
+        this.phoneNumber = this.principal.phoneNumber
+      } else {
+        this.name = ''
+        this.phoneNumber = ''
+      }
+    },
+    oninput () {
+      this.checked = false
+    },
     findPostcode () {
       this.$refs.daumPostcode.open()
     },
@@ -90,57 +134,10 @@ export default {
         this.selected = address.selected
         this.detailed = address.detailed
       }
-    },
-    getOrderItemList () {
-      for (let i = 0; i < this.orderCheck.length; i++) {
-        this.itemIdList.push(this.orderCheck[i].id)
-        this.countList.push(this.orderCheck[i].count)
-        this.totalPriceList.push(this.orderCheck[i].id * this.orderCheck[i].count)
-      }
-      this.$axios.get('/api/items', {
-        params: {
-          itemIds: this.itemIdList.join(',')
-        }
-      })
-        .then((response) => {
-          for (let i = 0; i < response.data.length; i++) {
-            response.data[i].count = this.orderCheck[i].count
-            this.orderItemList.push(response.data[i])
-            this.totalPrice += response.data[i].price * response.data[i].count
-          }
-        })
-    },
-    onChange () {
-      this.checked = false
-    },
-    pay () {
-      this.$axios.post('/api/orders', {
-        postcode: this.postcode,
-        selected: this.selected,
-        detailed: this.detailed,
-        payment: this.payment,
-        itemIdList: this.itemIdList,
-        countList: this.countList,
-        totalPriceList: this.totalPriceList,
-        name: this.name,
-        phoneNumber: this.phoneNumber
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            alert('주문이 완료되었습니다.')
-            this.$router.push('/')
-          }
-        })
-    },
-    check () {
-      if (this.checked === true) {
-        this.name = this.$store.getters.getPrincipal.name
-        this.phoneNumber = this.$store.getters.getPrincipal.phoneNumber
-      } else {
-        this.name = ''
-        this.phoneNumber = ''
-      }
     }
+  },
+  created () {
+    this.getItemList()
   }
 }
 </script>
