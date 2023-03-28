@@ -1,5 +1,5 @@
 <template>
-  <main class="item">
+  <main class="item" v-if="item">
     <img src="@/assets/images/git.png" />
 
     <div>
@@ -9,11 +9,11 @@
 
     <div>
       <span>
-        <button @click="countMinus">-</button>
-        <input type="text" v-model="count" />
-        <button @click="countPlus">+</button>
+        <button @click="decrease">-</button>
+        <input type="text" v-model="quantity" />
+        <button @click="increase">+</button>
       </span>
-      <span>총 {{ item.price * count }} 원</span>
+      <span>총 {{ item.price * quantity }} 원</span>
     </div>
 
     <div>
@@ -31,7 +31,7 @@ export default {
     return {
       itemId: 0,
       item: null,
-      count: 1
+      quantity: 1
     }
   },
   methods: {
@@ -41,16 +41,18 @@ export default {
           this.item = response.data
         })
     },
-    countMinus () {
-      if (this.count > 1) {
-        this.count--
+    decrease () {
+      if (this.quantity > 1) {
+        this.quantity--
       }
     },
-    countPlus () {
-      this.count++
+    increase () {
+      this.quantity++
     },
     goToOrder () {
-      this.$store.commit('setOrderCheck', [{ id: this.itemId, count: this.count }])
+      const orderCheck = {}
+      orderCheck[this.itemId] = this.quantity
+      this.$store.commit('setOrderCheck', orderCheck)
       this.$router.push('/order')
     }
   },
