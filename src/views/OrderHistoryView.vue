@@ -90,7 +90,7 @@ export default {
     },
     orderCancel (orderId, orderItemId) {
       this.$axios.put('/api/orders/' + orderId, {
-        orderItemId: orderItemId
+        id: orderItemId
       })
         .then((response) => {
           if (response.status === 200) {

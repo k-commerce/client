@@ -84,7 +84,7 @@ export default {
     initOrderItemList (itemList) {
       for (const { id, name, price, description } of itemList) {
         const quantity = this.orderCheck[id]
-        this.orderItemList.push({ id, name, price, description, quantity })
+        this.orderItemList.push({ itemId: id, name, price, description, quantity })
         this.totalPrice += price * quantity
       }
     },
