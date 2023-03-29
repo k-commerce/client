@@ -1,175 +1,126 @@
 <template>
   <main class="orderHistory">
-    <OrderDetailsModal class="modal" v-if="orderDetailsModalVal" @modalClose="modalClose" :orderDetails="orderDetails" />
-    <div class="top">주문 목록</div>
-    <hr>
-    <div class="container" v-for="(orderItem, idx) in orderItemList" :key="idx">
-      <div class="containerTop">
-        <small>{{ orderItem[0].order.createdDate.substr(0, 4) }}. {{ orderItem[0].order.createdDate.substr(5, 2) }}. {{ orderItem[0].order.createdDate.substr(8, 2) }}</small>
-        <button @click="orderDetailsModalFunc(orderItem)">주문 상세보기 ></button>
+    <OrderDetailsModal v-if="order" @close="close" :order="order" />
+
+    <span v-for="order in orderHistory" :key="order">
+      <span>
+        <span>{{ order[0].order.createdDate.substring(0, 10) }}</span>
+        <button @click="open(order)">주문 상세보기 ></button>
+      </span>
+
+      <div v-for="orderItem in order" :key="orderItem">
+        <div>{{ orderItem.status === 'CANCEL' ? '주문 취소' : '주문 완료' }}</div>
+        <span>
+          <img src="@/assets/images/git.png" />
+          <span>
+            <div>{{ orderItem.item.name }}</div>
+            <div>{{ orderItem.orderPrice / orderItem.quantity }}원 X {{ orderItem.quantity }}개</div>
+            <div>총 {{ orderItem.orderPrice }}원</div>
+          </span>
+        </span>
+        <button v-if="orderItem.status !== 'CANCEL'" @click="cancelOrderItem(orderItem)">주문 취소</button>
       </div>
-      <div class="containerBody" v-if="orderItem.length === 1">
-        <div class="card">
-          <div class="cardBody">
-            <span class="orderStatus">{{ (orderItem[0].status === 'SUCCESS') ? '주문완료' : (orderItem[0].status === 'CANCEL' ? '주문취소' : '알수없음') }}</span>
-            <img src="@/assets/images/git.png" alt="">
-            <span class="orderInfo">
-              <strong>{{ orderItem[0].item.name }}</strong>
-              <div>
-                <span>{{ orderItem[0].item.price }} 원 / {{ orderItem[0].quantity }} 개</span>
-                <button>장바구니 담기</button>
-              </div>
-            </span>
-          </div>
-          <div class="cardFoot">
-            <button @click="orderCancel(orderItem[0].order.id, orderItem[0].id)">주문 취소 / 반품</button>
-          </div>
-        </div>
-      </div>
-      <div class="containerBody" v-else>
-        <div class="card" v-for="(oi, idx2) in orderItem" :key="idx2">
-          <div class="cardBody">
-            <span class="orderStatus">{{ (oi.status === 'SUCCESS') ? '주문완료' : (oi.status === 'CANCEL' ? '주문취소' : '알수없음') }}</span>
-            <img src="@/assets/images/git.png" alt="">
-            <span class="orderInfo">
-              <strong>{{ oi.item.name }}</strong>
-              <div>
-                <span>{{ oi.item.price }} 원 / {{ oi.quantity }} 개</span>
-                <button>장바구니 담기</button>
-              </div>
-            </span>
-          </div>
-          <div class="cardFoot">
-            <button @click="orderCancel(oi.order.id, oi.id)">주문 취소 / 반품</button>
-          </div>
-        </div>
-      </div>
-      <hr>
-    </div>
+    </span>
   </main>
 </template>
 
 <script>
 import OrderDetailsModal from '@/components/OrderDetailsModal'
+
 export default {
-  data () {
-    return {
-      orderDetailsModalVal: false,
-      orderItemList: [],
-      orderDetails: null
-    }
-  },
   components: {
     OrderDetailsModal
   },
-  created () {
-    this.getOrderHistory()
+  data () {
+    return {
+      orderHistory: [],
+      order: null
+    }
   },
   methods: {
-    orderDetailsModalFunc (orderItem) {
-      if (this.orderDetailsModalVal === false) {
-        this.orderDetails = orderItem
-        this.orderDetailsModalVal = true
-      }
-    },
-    modalClose () {
-      this.orderDetailsModalVal = false
-    },
     getOrderHistory () {
       this.$axios.get('/api/orders')
-        .then((response) => {
-          const groupByOrderId = response.data.reduce((acc, obj) => {
-            const { order } = obj
-            acc[order.id] = acc[order.id] ?? []
-            acc[order.id].push(obj)
-            return acc
-          }, {})
-          this.orderItemList = Object.values(groupByOrderId)
-          this.orderItemList.reverse()
-        })
-    },
-    orderCancel (orderId, orderItemId) {
-      this.$axios.put('/api/orders/' + orderId, {
-        id: orderItemId
-      })
-        .then((response) => {
+        .then(response => {
           if (response.status === 200) {
-            alert('주문이 취소되었습니다.')
-            this.getOrderHistory()
+            this.orderHistory = this.groupByOrderId(response.data)
           }
         })
+    },
+    groupByOrderId (orderHistory) {
+      let groupByOrderId = orderHistory.reduce((acc, obj) => {
+        const { order } = obj
+        acc[order.id] = acc[order.id] ?? []
+        acc[order.id].push(obj)
+        return acc
+      }, {})
+      groupByOrderId = Object.values(groupByOrderId)
+      groupByOrderId.reverse()
+      return groupByOrderId
+    },
+    cancelOrderItem (orderItem) {
+      const orderId = orderItem.order.id
+      const orderItemId = orderItem.id
+      this.$axios.put('/api/orders/' + orderId, {
+        id: orderItemId
+      }).then(response => {
+        if (response.status === 200) {
+          alert('주문이 취소되었습니다.')
+          this.getOrderHistory()
+        }
+      })
+    },
+    open (order) {
+      this.order = order
+    },
+    close () {
+      this.order = null
     }
+  },
+  created () {
+    this.getOrderHistory()
   }
 }
 </script>
 
 <style scoped>
-.top {
-  text-align: center;
-  margin-bottom: 0.6rem;
-}
-
-.container {
-  margin-top: 1rem;
-}
-
-.containerTop > small {
-  margin-left: 1rem;
-}
-
-.containerTop {
-  margin-bottom: 0.6rem;
-}
-
-.containerTop > button {
-  float: right;
-  margin-right: 1rem;
-  cursor: pointer;
-}
-
-.card {
-  border: 1px solid black;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.cardBody > .orderStatus {
+.orderHistory > span {
   display: block;
-  margin-left: 1rem;
-}
-.cardBody> img {
-  width: 5rem;
-  object-fit: cover;
-  margin-left: 0.6rem;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
 }
 
-.orderInfo {
-  margin-left: 1rem;
-  display: inline-block;
+.orderHistory > span > span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.orderInfo >div {
-  margin-top: 1.8rem;
-  margin-bottom: 0.5rem;
+.orderHistory > span > span > button {
+  width: 8rem;
+  height: 2rem;
 }
 
-.orderInfo > div > button {
-  margin-left: 6.6rem;
-  float: right;
+.orderHistory > span > div {
+  margin: 1rem 0 0 0;
+  padding: 1rem;
+  border: 1px solid black;
 }
 
-.cardBody > .itemInfo > h5 {
-  display: inline;
+.orderHistory > span > div > span {
+  display: flex;
+  margin: 1rem 0;
 }
 
-.cardFoot {
-  text-align: center;
+.orderHistory > span > div > span > img {
+  width: 6rem;
+  height: 6rem;
+  margin: 0 2rem 0 0;
 }
-.cardFoot > button {
-  width: 10rem;
-  height: 1.5rem;
+
+.orderHistory > span > div > button {
+  display: block;
+  width: 6rem;
+  height: 2rem;
+  margin: 0 auto;
 }
 </style>

@@ -3,19 +3,19 @@
     <AddressListModal v-if="addressListModal" @close="close" />
 
     <span>
-      <span>주문 상품</span>
-      <div v-for="orderItem in orderItemList" :key="orderItem">
+      <div>주문 상품</div>
+      <span v-for="orderItem in orderItemList" :key="orderItem">
         <img />
-        <div>
+        <span>
           <div>{{ orderItem.name }}</div>
-          <div>{{ orderItem.quantity }} 개</div>
-          <div>{{ orderItem.price * orderItem.quantity }} 원</div>
-        </div>
-      </div>
+          <div>{{ orderItem.price }}원 X {{ orderItem.quantity }}개</div>
+          <div>= {{ orderItem.price * orderItem.quantity }}원</div>
+        </span>
+      </span>
     </span>
 
     <span>
-      <span>배송 정보</span>
+      <div>배송 정보</div>
       <label><input type="checkbox" v-model="checked" @change="check" />주문자와 동일</label>
       <input type="text" placeholder="받는 사람" v-model="name" @input="oninput" />
       <input type="text" placeholder="연락처" v-model="phoneNumber" @input="oninput" />
@@ -27,14 +27,14 @@
     <DaumPostcode ref="daumPostcode" @oncomplete="oncomplete" />
 
     <span>
-      <span>결제 방식</span>
+      <div>결제 방식</div>
       <label><input type="radio" value="CARD" v-model="payment" />신용카드</label>
       <label><input type="radio" value="DEPOSIT" v-model="payment" />무통장입금</label>
     </span>
 
     <span>
-      <span>결제 금액</span>
-      <div>총 {{ totalPrice }} 원</div>
+      <div>결제 금액</div>
+      <span>총 {{ totalPrice }} 원</span>
       <button @click="createOrder">주문하기</button>
     </span>
   </main>
@@ -78,7 +78,9 @@ export default {
           itemIdList: Object.keys(this.orderCheck).join(',')
         }
       }).then(response => {
-        this.initOrderItemList(response.data)
+        if (response.status === 200) {
+          this.initOrderItemList(response.data)
+        }
       })
     },
     initOrderItemList (itemList) {
@@ -100,7 +102,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           alert('주문이 완료되었습니다.')
-          this.$router.push('/')
+          this.$router.push('/orderhistory')
         }
       })
     },
@@ -154,23 +156,22 @@ export default {
   text-align: left;
 }
 
-.order > span > span {
-  display: block;
-  margin-bottom: 1rem;
+.order > span > div {
+  margin: 0 0 1rem 0;
 }
 
-.order > span > div {
+.order > span > span {
   display: flex;
 }
 
-.order > span > div > img {
+.order > span > span > img {
   width: 8rem;
   height: 8rem;
-  margin-right: 1rem;
+  margin: 0 1rem 0 0;
 }
 
 .order > span > label {
-  margin: 0 1rem 0 0.2rem;
+  margin: 0 1rem 0 0;
 }
 
 .order > span > input[type='text'] {
@@ -183,6 +184,6 @@ export default {
 .order > span > button {
   width: 24rem;
   height: 3rem;
-  margin-top: 1rem;
+  margin: 1rem 0 0 0;
 }
 </style>

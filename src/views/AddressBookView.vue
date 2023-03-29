@@ -26,7 +26,7 @@ export default {
     return {
       addressModal: false,
       address: null,
-      addressList: null
+      addressList: []
     }
   },
   methods: {
@@ -77,7 +77,7 @@ export default {
   display: inline-block;
   width: 22rem;
   height: 10rem;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem 0;
   padding: 1rem;
   border: 1px solid lightgray;
   text-align: left;
