@@ -1,6 +1,6 @@
 export default {
   state: {
-    orderCheck: {}
+    orderCheck: null
   },
   getters: {
     getOrderCheck: state => state.orderCheck

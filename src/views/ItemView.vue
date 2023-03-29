@@ -38,7 +38,9 @@ export default {
     getItem () {
       this.$axios.get('/api/items/' + this.itemId)
         .then(response => {
-          this.item = response.data
+          if (response.status === 200) {
+            this.item = response.data
+          }
         })
     },
     decrease () {

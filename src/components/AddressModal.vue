@@ -125,7 +125,7 @@ export default {
 }
 
 .addressModal > input:first-child {
-  margin-top: 1rem;
+  margin: 1rem 0 0 0;
 }
 
 .addressModal > span {
