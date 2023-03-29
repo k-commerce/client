@@ -34,17 +34,30 @@ export default {
       this.$axios.get('/api/categories')
         .then(response => {
           if (response.status === 200) {
-            const categoryList = response.data
+            const categoryList = Object.values(this.groupByParentId(response.data))
             for (const category of categoryList) {
               const childList = category.childList
               for (const child of childList) {
                 if (child.id === this.categoryId) {
                   this.category = category
+                  return
                 }
               }
             }
           }
         })
+    },
+    groupByParentId (categoryList) {
+      return categoryList.reduce((acc, obj) => {
+        const { id, parentId } = obj
+        if (parentId == null) {
+          acc[id] = obj
+          acc[id].childList = []
+        } else {
+          acc[parentId].childList.push(obj)
+        }
+        return acc
+      }, {})
     },
     getItemList () {
       this.$axios.get('/api/items', {
