@@ -92,7 +92,7 @@ export default {
     },
     createOrder () {
       this.$axios.post('/api/orders', {
-        orderItemList: this.orderItemList,
+        orderCheck: this.orderCheck,
         name: this.name,
         phoneNumber: this.phoneNumber,
         postcode: this.postcode,
