@@ -33,68 +33,7 @@ export default {
   },
   data () {
     return {
-      orderHistory: [
-        {
-          id: 1,
-          name: '홍길동',
-          phoneNumber: '01234567890',
-          address: {
-            postcode: '00000',
-            selected: '서울특별시',
-            detailed: ''
-          },
-          payment: 'CARD',
-          createdDate: '2023-04-05T00:00:00',
-          orderItemList: [
-            {
-              id: 1,
-              itemId: 1,
-              itemName: '아이템1',
-              quantity: 1,
-              orderPrice: 10000,
-              status: 'SUCCESS'
-            },
-            {
-              id: 2,
-              itemId: 2,
-              itemName: '아이템2',
-              quantity: 2,
-              orderPrice: 20000,
-              status: 'CANCEL'
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: '홍길동',
-          phoneNumber: '01234567890',
-          address: {
-            postcode: '00000',
-            selected: '서울특별시',
-            detailed: ''
-          },
-          payment: 'CARD',
-          createdDate: '2023-04-05T00:00:00',
-          orderItemList: [
-            {
-              id: 3,
-              itemId: 1,
-              itemName: '아이템1',
-              quantity: 1,
-              orderPrice: 10000,
-              status: 'SUCCESS'
-            },
-            {
-              id: 4,
-              itemId: 2,
-              itemName: '아이템2',
-              quantity: 2,
-              orderPrice: 20000,
-              status: 'CANCEL'
-            }
-          ]
-        }
-      ],
+      orderHistory: [],
       order: null
     }
   },
@@ -125,7 +64,7 @@ export default {
     }
   },
   created () {
-    // this.getOrderHistory()
+    this.getOrderHistory()
   }
 }
 </script>
