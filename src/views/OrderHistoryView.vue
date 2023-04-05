@@ -18,7 +18,7 @@
             <div>총 {{ orderItem.orderPrice }}원</div>
           </span>
         </span>
-        <button v-if="orderItem.status !== 'CANCEL'" @click="cancelOrderItem(orderItem)">주문 취소</button>
+        <button v-if="orderItem.status !== 'CANCEL'" @click="cancelOrderItem(order.id, orderItem.id)">주문 취소</button>
       </div>
     </span>
   </main>
@@ -47,6 +47,7 @@ export default {
           createdDate: '2023-04-05T00:00:00',
           orderItemList: [
             {
+              id: 1,
               itemId: 1,
               itemName: '아이템1',
               quantity: 1,
@@ -54,6 +55,7 @@ export default {
               status: 'SUCCESS'
             },
             {
+              id: 2,
               itemId: 2,
               itemName: '아이템2',
               quantity: 2,
@@ -75,6 +77,7 @@ export default {
           createdDate: '2023-04-05T00:00:00',
           orderItemList: [
             {
+              id: 3,
               itemId: 1,
               itemName: '아이템1',
               quantity: 1,
@@ -82,6 +85,7 @@ export default {
               status: 'SUCCESS'
             },
             {
+              id: 4,
               itemId: 2,
               itemName: '아이템2',
               quantity: 2,
@@ -103,9 +107,7 @@ export default {
           }
         })
     },
-    cancelOrderItem (orderItem) {
-      const orderId = orderItem.order.id
-      const orderItemId = orderItem.id
+    cancelOrderItem (orderId, orderItemId) {
       this.$axios.put('/api/orders/' + orderId, {
         id: orderItemId
       }).then(response => {
