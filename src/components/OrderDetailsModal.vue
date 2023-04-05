@@ -2,19 +2,19 @@
   <div class="orderDetailsModal">
     <i class="fas fa-times fa-lg" @click="close" />
 
-    <div>{{ order[0].order.createdDate.substring(0, 10) + ' ' + order[0].order.createdDate.substring(11, 19) }}</div>
+    <div>{{ order.createdDate.substring(0, 10) + ' ' + order.createdDate.substring(11, 19) }}</div>
 
     <span>
       <div>결제 정보</div>
       <hr />
-      <div v-for="orderItem in order" :key="orderItem">
-        <span>{{ orderItem.item.name }}</span>
+      <div v-for="orderItem in order.orderItemList" :key="orderItem">
+        <span>{{ orderItem.itemName }}</span>
         <span>{{ orderItem.orderPrice }} 원</span>
       </div>
       <hr />
       <div>
         <span>결제 방식</span>
-        <span>{{ order[0].order.payment === 'CARD' ? '신용카드' : '무통장입금' }}</span>
+        <span>{{ order.payment === 'CARD' ? '신용카드' : '무통장입금' }}</span>
       </div>
       <div>
         <span>결제 금액</span>
@@ -25,9 +25,9 @@
     <span>
       <div>배송 정보</div>
       <hr />
-      <div>{{ order[0].order.name }}</div>
-      <div>{{ order[0].order.phoneNumber.substring(0, 3) + '-' + order[0].order.phoneNumber.substring(3, 7) + '-' + order[0].order.phoneNumber.substring(7, 11) }}</div>
-      <div>{{ '(' + order[0].order.address.postcode + ') ' + order[0].order.address.selected + ' ' + order[0].order.address.detailed }}</div>
+      <div>{{ order.name }}</div>
+      <div>{{ order.phoneNumber.substring(0, 3) + '-' + order.phoneNumber.substring(3, 7) + '-' + order.phoneNumber.substring(7, 11) }}</div>
+      <div>{{ '(' + order.address.postcode + ') ' + order.address.selected + ' ' + order.address.detailed }}</div>
     </span>
   </div>
 </template>
@@ -48,7 +48,7 @@ export default {
     }
   },
   created () {
-    for (const orderItem of this.order) {
+    for (const orderItem of this.order.orderItemList) {
       this.totalPrice += orderItem.orderPrice
     }
   }

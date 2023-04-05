@@ -4,16 +4,16 @@
 
     <span v-for="order in orderHistory" :key="order">
       <span>
-        <span>{{ order[0].order.createdDate.substring(0, 10) }}</span>
+        <span>{{ order.createdDate.substring(0, 10) }}</span>
         <button @click="open(order)">주문 상세보기 ></button>
       </span>
 
-      <div v-for="orderItem in order" :key="orderItem">
+      <div v-for="orderItem in order.orderItemList" :key="orderItem">
         <div>{{ orderItem.status === 'CANCEL' ? '주문 취소' : '주문 완료' }}</div>
         <span>
           <img src="@/assets/images/git.png" />
           <span>
-            <div>{{ orderItem.item.name }}</div>
+            <div>{{ orderItem.itemName }}</div>
             <div>{{ orderItem.orderPrice / orderItem.quantity }}원 X {{ orderItem.quantity }}개</div>
             <div>총 {{ orderItem.orderPrice }}원</div>
           </span>
@@ -33,7 +33,64 @@ export default {
   },
   data () {
     return {
-      orderHistory: [],
+      orderHistory: [
+        {
+          id: 1,
+          name: '홍길동',
+          phoneNumber: '01234567890',
+          address: {
+            postcode: '00000',
+            selected: '서울특별시',
+            detailed: ''
+          },
+          payment: 'CARD',
+          createdDate: '2023-04-05T00:00:00',
+          orderItemList: [
+            {
+              itemId: 1,
+              itemName: '아이템1',
+              quantity: 1,
+              orderPrice: 10000,
+              status: 'SUCCESS'
+            },
+            {
+              itemId: 2,
+              itemName: '아이템2',
+              quantity: 2,
+              orderPrice: 20000,
+              status: 'CANCEL'
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: '홍길동',
+          phoneNumber: '01234567890',
+          address: {
+            postcode: '00000',
+            selected: '서울특별시',
+            detailed: ''
+          },
+          payment: 'CARD',
+          createdDate: '2023-04-05T00:00:00',
+          orderItemList: [
+            {
+              itemId: 1,
+              itemName: '아이템1',
+              quantity: 1,
+              orderPrice: 10000,
+              status: 'SUCCESS'
+            },
+            {
+              itemId: 2,
+              itemName: '아이템2',
+              quantity: 2,
+              orderPrice: 20000,
+              status: 'CANCEL'
+            }
+          ]
+        }
+      ],
       order: null
     }
   },
@@ -42,20 +99,9 @@ export default {
       this.$axios.get('/api/orders')
         .then(response => {
           if (response.status === 200) {
-            this.orderHistory = this.groupByOrderId(response.data)
+            this.orderHistory = response.data
           }
         })
-    },
-    groupByOrderId (orderHistory) {
-      let groupByOrderId = orderHistory.reduce((acc, obj) => {
-        const { order } = obj
-        acc[order.id] = acc[order.id] ?? []
-        acc[order.id].push(obj)
-        return acc
-      }, {})
-      groupByOrderId = Object.values(groupByOrderId)
-      groupByOrderId.reverse()
-      return groupByOrderId
     },
     cancelOrderItem (orderItem) {
       const orderId = orderItem.order.id
@@ -77,7 +123,7 @@ export default {
     }
   },
   created () {
-    this.getOrderHistory()
+    // this.getOrderHistory()
   }
 }
 </script>
