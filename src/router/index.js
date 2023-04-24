@@ -17,7 +17,7 @@ const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/join', name: 'join', component: JoinView },
   { path: '/login', name: 'login', component: LoginView },
-  { path: '/categories/:id', name: 'itemList', component: ItemListView },
+  { path: '/items', name: 'itemList', component: ItemListView },
   { path: '/items/:id', name: 'item', component: ItemView },
   { path: '/order', name: 'order', component: OrderView, beforeEnter: requireAuthentication() },
   { path: '/orderhistory', name: 'orderHistory', component: OrderHistoryView, beforeEnter: requireAuthentication() },

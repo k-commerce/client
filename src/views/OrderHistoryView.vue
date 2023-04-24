@@ -4,21 +4,21 @@
 
     <span v-for="order in orderHistory" :key="order">
       <span>
-        <span>{{ order[0].order.createdDate.substring(0, 10) }}</span>
+        <span>{{ order.createdDate.substring(0, 10) }}</span>
         <button @click="open(order)">주문 상세보기 ></button>
       </span>
 
-      <div v-for="orderItem in order" :key="orderItem">
+      <div v-for="orderItem in order.orderItemList" :key="orderItem">
         <div>{{ orderItem.status === 'CANCEL' ? '주문 취소' : '주문 완료' }}</div>
         <span>
-          <img src="@/assets/images/git.png" />
+          <img />
           <span>
-            <div>{{ orderItem.item.name }}</div>
+            <div>{{ orderItem.itemName }}</div>
             <div>{{ orderItem.orderPrice / orderItem.quantity }}원 X {{ orderItem.quantity }}개</div>
             <div>총 {{ orderItem.orderPrice }}원</div>
           </span>
         </span>
-        <button v-if="orderItem.status !== 'CANCEL'" @click="cancelOrderItem(orderItem)">주문 취소</button>
+        <button v-if="orderItem.status !== 'CANCEL'" @click="cancelOrderItem(order.id, orderItem.id)">주문 취소</button>
       </div>
     </span>
   </main>
@@ -42,24 +42,11 @@ export default {
       this.$axios.get('/api/orders')
         .then(response => {
           if (response.status === 200) {
-            this.orderHistory = this.groupByOrderId(response.data)
+            this.orderHistory = response.data
           }
         })
     },
-    groupByOrderId (orderHistory) {
-      let groupByOrderId = orderHistory.reduce((acc, obj) => {
-        const { order } = obj
-        acc[order.id] = acc[order.id] ?? []
-        acc[order.id].push(obj)
-        return acc
-      }, {})
-      groupByOrderId = Object.values(groupByOrderId)
-      groupByOrderId.reverse()
-      return groupByOrderId
-    },
-    cancelOrderItem (orderItem) {
-      const orderId = orderItem.order.id
-      const orderItemId = orderItem.id
+    cancelOrderItem (orderId, orderItemId) {
       this.$axios.put('/api/orders/' + orderId, {
         id: orderItemId
       }).then(response => {

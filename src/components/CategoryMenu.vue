@@ -49,7 +49,7 @@ export default {
       this.parent = this.parent === category ? 0 : category
     },
     goToItemList (category) {
-      this.$router.push({ name: 'itemList', params: { id: category.id } })
+      this.$router.push({ name: 'itemList', query: { categoryId: category.id } })
       this.$emit('hideMenu')
     }
   },
