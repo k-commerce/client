@@ -1,5 +1,5 @@
 <template>
-  <main class="itemList">
+  <main class="itemList" @scroll="scroll">
     <div v-if="category">
       <div>{{ category.name }}</div>
       <ul>
@@ -24,7 +24,9 @@
 export default {
   data () {
     return {
-      categoryId: 0,
+      cursorId: null,
+      name: null,
+      categoryId: null,
       category: null,
       itemList: []
     }
@@ -62,24 +64,39 @@ export default {
     getItemList () {
       this.$axios.get('/api/items', {
         params: {
+          cursorId: this.cursorId,
+          name: this.name,
           categoryId: this.categoryId
         }
       }).then(response => {
         if (response.status === 200) {
-          this.itemList = response.data
+          const itemList = response.data
+          if (itemList.length) {
+            this.itemList.push(...itemList)
+            this.cursorId = Math.max(...itemList.map(x => x.id))
+          }
         }
       })
     },
     goToItemList (category) {
-      this.$router.push({ name: 'itemList', params: { id: category.id } })
+      this.$router.push({ name: 'itemList', query: { categoryId: category.id } })
     },
     goToItem (item) {
       this.$router.push({ name: 'item', params: { id: item.id } })
+    },
+    scroll (e) {
+      const { clientHeight, scrollHeight, scrollTop } = e.target
+      if (clientHeight === scrollHeight - scrollTop) {
+        this.getItemList()
+      }
     }
   },
   created () {
-    this.categoryId = parseInt(this.$route.params.id)
-    this.getCategoryList()
+    this.name = this.$route.query.name
+    if (this.$route.query.categoryId) {
+      this.categoryId = parseInt(this.$route.query.categoryId)
+      this.getCategoryList()
+    }
     this.getItemList()
   }
 }

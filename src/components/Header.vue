@@ -3,8 +3,8 @@
     <i class="fas fa-bars" @click="showMenu(1)" />
     <i class="fas fa-home" @click="goHome" />
     <span>
-      <input type="text" />
-      <i class="fas fa-search" />
+      <input type="text" v-model="name" />
+      <i class="fas fa-search" @click="search" />
     </span>
     <i class="fas fa-shopping-cart" />
     <i class="fas fa-user" @click="showMenu(2)" />
@@ -24,7 +24,8 @@ export default {
   },
   data () {
     return {
-      menu: 0
+      menu: 0,
+      name: ''
     }
   },
   computed: {
@@ -55,6 +56,11 @@ export default {
     goHome () {
       this.$router.push('/')
       this.menu = 0
+    },
+    search () {
+      if (this.name) {
+        this.$router.push({ name: 'itemList', query: { name: this.name } })
+      }
     }
   }
 }
