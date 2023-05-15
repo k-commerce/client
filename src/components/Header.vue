@@ -6,7 +6,6 @@
       <input type="text" v-model="name" />
       <i class="fas fa-search" @click="search" />
     </span>
-    <i class="fas fa-shopping-cart" />
     <i class="fas fa-user" @click="showMenu(2)" />
   </header>
   <CategoryMenu v-show="menu === 1" @hideMenu="hideMenu" />

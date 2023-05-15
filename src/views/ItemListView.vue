@@ -11,7 +11,7 @@
 
     <div>
       <span v-for="item in itemList" :key="item" @click="goToItem(item)">
-        <img />
+        <img :src="item.imageUrl" />
         <div>{{ item.name }}</div>
         <div>{{ item.price }} 원</div>
         <div>{{ item.description }}</div>

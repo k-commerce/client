@@ -11,7 +11,7 @@
       <div v-for="orderItem in order.orderItemList" :key="orderItem">
         <div>{{ orderItem.status === 'CANCEL' ? '주문 취소' : '주문 완료' }}</div>
         <span>
-          <img />
+          <img :src="orderItem.itemImageUrl" />
           <span>
             <div>{{ orderItem.itemName }}</div>
             <div>{{ orderItem.orderPrice / orderItem.quantity }}원 X {{ orderItem.quantity }}개</div>

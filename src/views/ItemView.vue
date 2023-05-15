@@ -1,6 +1,6 @@
 <template>
   <main class="item" v-if="item">
-    <img />
+    <img :src="item.imageUrl" />
 
     <div>
       <span>{{ item.name }}</span>
@@ -17,7 +17,6 @@
     </div>
 
     <div>
-      <button>장바구니</button>
       <button @click="goToOrder">바로구매</button>
     </div>
 

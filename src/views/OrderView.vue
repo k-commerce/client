@@ -5,7 +5,7 @@
     <span>
       <div>주문 상품</div>
       <span v-for="orderItem in orderItemList" :key="orderItem">
-        <img />
+        <img :src="orderItem.imageUrl" />
         <span>
           <div>{{ orderItem.name }}</div>
           <div>{{ orderItem.price }}원 X {{ orderItem.quantity }}개</div>
@@ -84,9 +84,9 @@ export default {
       })
     },
     initOrderItemList (itemList) {
-      for (const { id, name, price, description } of itemList) {
+      for (const { id, name, imageUrl, price, description } of itemList) {
         const quantity = this.orderCheck[id]
-        this.orderItemList.push({ itemId: id, name, price, description, quantity })
+        this.orderItemList.push({ itemId: id, name, imageUrl, price, description, quantity })
         this.totalPrice += price * quantity
       }
     },

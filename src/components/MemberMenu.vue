@@ -3,7 +3,6 @@
     <ul>
       <li @click="goTo('/orderhistory')">주문 내역</li>
       <li @click="goTo('/addressbook')">배송지 관리</li>
-      <li>내 정보 관리</li>
       <li @click="logout">로그아웃</li>
     </ul>
   </div>
